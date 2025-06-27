@@ -1,0 +1,133 @@
+#!/usr/bin/env node
+// #!/usr/bin/env node
+
+// const fs = require("fs");
+// const http = require("http");
+// const https = require("https");
+// const app = require("../app");
+// const debug = require("debug")("user-auth-api:server");
+
+// // Ports
+// const HTTP_PORT = normalizePort(process.env.HTTP_PORT || "8080");
+// const HTTPS_PORT = normalizePort(process.env.PORT || "5000");
+
+// // Set HTTPS port in Express
+// app.set("port", HTTPS_PORT);
+
+// // SSL options
+// const options = {
+//   key: fs.readFileSync("/etc/letsencrypt/live/xn--casiom820-jy5d.com/privkey.pem"),  // Replace with actual private key path
+//   cert: fs.readFileSync("/etc/letsencrypt/live/xn--casiom820-jy5d.com/fullchain.pem"), // Replace with actual certificate path
+// };
+
+// // Create HTTP server for redirecting to HTTPS
+// const httpServer = http.createServer((req, res) => {
+//   const host = req.headers.host.replace(/:\d+$/, ""); // remove port if present
+//   res.writeHead(301, {
+//     Location: `https://${host}:${HTTPS_PORT}${req.url}`,
+//   });
+//   res.end();
+// });
+
+// // Create HTTPS server for actual app
+// const httpsServer = https.createServer(options, app);
+
+// // Start HTTP Server
+// httpServer.listen(HTTP_PORT);
+// httpServer.on("error", onError);
+// httpServer.on("listening", () => {
+//   console.log(`📡 HTTP redirect server running on port ${HTTP_PORT}`);
+// });
+
+// // Start HTTPS Server
+// httpsServer.listen(HTTPS_PORT);
+// httpsServer.on("error", onError);
+// httpsServer.on("listening", onListening);
+
+// // Normalize port
+// function normalizePort(val) {
+//   const port = parseInt(val, 10);
+//   if (isNaN(port)) return val;
+//   if (port >= 0) return port;
+//   return false;
+// }
+
+// // Handle errors
+// function onError(error) {
+//   if (error.syscall !== "listen") throw error;
+//   const bind = typeof error.port === "string" ? "Pipe " + error.port : "Port " + error.port;
+//   switch (error.code) {
+//     case "EACCES":
+//       console.error(`${bind} requires elevated privileges`);
+//       process.exit(1);
+//     case "EADDRINUSE":
+//       console.error(`${bind} is already in use`);
+//       process.exit(1);
+//     default:
+//       throw error;
+//   }
+// }
+
+// // Listening callback
+// function onListening() {
+//   const addr = httpsServer.address();
+//   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+//   debug("Listening on " + bind);
+//   console.log("✅ Secure HTTPS Server running on " + bind);
+// }
+
+
+
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
+const app = require("../app");
+const debug = require("debug")("user-auth-api:server");
+
+const isProduction = process.env.NODE_ENV === "production";
+
+// Ports
+const HTTP_PORT = normalizePort(process.env.HTTP_PORT || "8000");
+const HTTPS_PORT = normalizePort(process.env.PORT || "5000");
+
+// Set port for Express
+app.set("port", isProduction ? HTTPS_PORT : HTTP_PORT);
+
+if (isProduction) {
+  // HTTPS options for production
+  const options = {
+    key: fs.readFileSync("/etc/letsencrypt/live/xn--casiom820-jy5d.com/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/xn--casiom820-jy5d.com/fullchain.pem"),
+  };
+
+  // HTTP redirect to HTTPS
+  http.createServer((req, res) => {
+    const host = req.headers.host.replace(/:\d+$/, "");
+    res.writeHead(301, {
+      Location: `https://${host}:${HTTPS_PORT}${req.url}`,
+    });
+    res.end();
+  }).listen(HTTP_PORT, () => {
+    console.log(`📡 HTTP redirect server running on port ${HTTP_PORT}`);
+  });
+
+  // Secure HTTPS server
+  https.createServer(options, app).listen(HTTPS_PORT, () => {
+    console.log(`✅ HTTPS server running on port ${HTTPS_PORT}`);
+  });
+} else {
+  // Local development HTTP only
+  http.createServer(app).listen(HTTP_PORT, () => {
+    console.log(`🚀 Development HTTP server running on port ${HTTP_PORT}`);
+    // check by clicking to this link 
+    console.log(`🔗 http://localhost:${HTTP_PORT}`);
+  });
+}
+
+// Helpers
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+  if (isNaN(port)) return val;
+  if (port >= 0) return port;
+  return false;
+}
