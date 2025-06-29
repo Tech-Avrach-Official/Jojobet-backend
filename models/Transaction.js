@@ -19,7 +19,7 @@ const TransactionSchema = new mongoose.Schema({
   },
   paymentType: {
     type: String,
-    enum: ["Havale/EFT", "OnwinHavale/EFT", "othomatik","Kripto_Para","Parola_Para","Papara","Ultrapay_Havale","Finpay_Havale","Kolaypay_Papara","Havale[SN]"],
+    enum: ["Tether", "JojoBET","Anında_Banka","Havale","Fast_Havale","Jet_Havale","Bitcoin","Tron","7/24_Havale","Hizli_Havale","PayCo","ParolaPara","ParolaPara_2","Doge","Ethereum"],
     required: true,
   },
   paymentMethod: {

@@ -5,6 +5,21 @@ const CompanyAccountSchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
+  displayName: { 
+    type: String, 
+  },
+  type:{
+    type: String,
+    default: "real time"
+  },
+  recommended:{
+    type: Boolean,
+    default: false
+  },
+  amountField:{
+    type: Boolean,
+    default: false
+  },
   image: { 
     type: String 
   },
@@ -19,7 +34,7 @@ const CompanyAccountSchema = new mongoose.Schema({
   },
   paymentType: { 
     type: String, 
-    enum: ["crypto", "Havale/EFT", "OnwinHavale/EFT","Kripto_Para","Parola_Para","Papara","Ultrapay_Havale","Finpay_Havale","Kolaypay_Papara","Havale[SN]"], 
+    enum: ["Tether", "JojoBET","Anında_Banka","Havale","Havale2","Fast_Havale","Jet_Havale","Bitcoin","Tron","7/24_Havale","Hizli_Havale","PayCo","ParolaPara","ParolaPara_2","Doge","Ethereum"], 
     required: true 
   },
   accountHolderName: { 
