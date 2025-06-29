@@ -31,8 +31,7 @@ router.put(
     { name: "image", maxCount: 1 },
     { name: "QRcode", maxCount: 1 },
   ]),
-  isAuthenticated,
-  isAdminFinanceOrFinanceAdmin,
+
   updateCompanyAccount
 );
 
